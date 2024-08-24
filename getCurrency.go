@@ -92,8 +92,7 @@ func getJson(url string, dupa *Currency) error {
 	err = decoder.Decode(&dupa)
 
 	if err != nil {
-		fmt.Errorf("Error fethcing the url")
-		return err
+		return fmt.Errorf("Error fethcing the url")
 	}
 
 	return nil
