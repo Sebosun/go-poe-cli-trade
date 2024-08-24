@@ -85,7 +85,6 @@ func getJson(url string, dupa *Currency) error {
 	}
 
 	defer r.Body.Close()
-	fmt.Println(r.Body)
 
 	decoder := json.NewDecoder(r.Body)
 

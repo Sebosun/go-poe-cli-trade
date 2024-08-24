@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -51,23 +52,38 @@ func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
 	return details[i], true
 }
 
+func findCurrencyByName(text string, state *State) (Lines, error) {
+	found := Lines{}
+	for _, curLine := range state.currency.Lines {
+		if curLine.CurrencyTypeName == text {
+			return curLine, nil
+		}
+	}
+	return found, errors.New("No line found")
+}
+
 func parsePriceCheck(text string, state *State) {
 	input := strings.Split(text, " ")
+
 	if len(input) < 2 {
 		fmt.Println("No argument provided for price check")
 		return
 	}
 
 	slice := input[1:]
-	name, found := getCurrencyName(slice[0], state)
-	if found {
-		fmt.Println("Found: ", name.TradeID)
-	} else {
-		fmt.Println("Not found")
+
+	currencyNames, found := getCurrencyName(slice[0], state)
+	if !found {
+		fmt.Println("Currency not found!")
+		return
 	}
 
-	if slice[0] == "divine" {
-		divPrice, chaosPrice := convertChaosToDivs(state.divLine.ChaosEquivalent, state.divLine.ChaosEquivalent)
-		fmt.Printf("Divine price is %d in divs and %.1f in Chaos \n", divPrice, chaosPrice)
+	currency, err := findCurrencyByName(currencyNames.Name, state)
+	if err != nil {
+		fmt.Println("Couldn't find the currency!")
+		return
 	}
+
+	divPrice, chaosPrice := convertChaosToDivs(currency.ChaosEquivalent, state.divLine.ChaosEquivalent)
+	fmt.Printf("%s: Divs %d Chaos %.2f  \n", currency.CurrencyTypeName, divPrice, chaosPrice)
 }

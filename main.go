@@ -19,11 +19,11 @@ func main() {
 
 	getJson(CURRENCY_URL, &state.currency)
 	extractDiv(&state)
-	printCurrency(&state)
+	/* printCurrency(&state) */
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Println("Enter text: ")
+		fmt.Print("Enter text: ")
 		scanner.Scan()
 
 		text := scanner.Text()

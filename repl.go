@@ -34,5 +34,5 @@ func replParse(text string, state *State) {
 		return
 	}
 
-	fmt.Println("# No valid commant provided")
+	fmt.Println("Use pc to price check an item!")
 }
