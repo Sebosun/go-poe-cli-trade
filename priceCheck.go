@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"go-poe-trade/helpers"
 	"slices"
 	"strconv"
 	"strings"
@@ -19,12 +20,17 @@ func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
 		isCurrencyFound := n.Name == textLower || n.TradeID == textLower || string(n.ID) == textLower
 
 		if !isCurrencyFound {
-			tradeIdSliced := strings.Split(n.TradeID, "-")
+			tradeIdSplit := strings.Split(n.TradeID, "-")
 
-			for _, v := range tradeIdSliced {
-				_, foundForbidden := slices.BinarySearch(forbiddenSplitNames, v)
+			for _, v := range tradeIdSplit {
+				_, foundForbidden := helpers.Find(forbiddenSplitNames, func(forbiddenName string) bool {
+					return forbiddenName == v
+				})
+
 				if !foundForbidden {
-					_, found := slices.BinarySearch(tradeIdSliced, textLower)
+					_, found := helpers.Find(tradeIdSplit, func(k string) bool {
+						return k == textLower
+					})
 					isCurrencyFound = found
 					break
 				}
@@ -34,12 +40,18 @@ func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
 		if !isCurrencyFound {
 			nameSliced := strings.Split(n.Name, " ")
 
-			for _, k := range nameSliced {
-				nameToLowerCase := strings.ToLower(k)
+			for _, itemPartialName := range nameSliced {
+				_, foundForbidden := helpers.Find(forbiddenSplitNames, func(forbiddenName string) bool {
+					return forbiddenName == strings.ToLower(itemPartialName)
+				})
 
-				if textLower == nameToLowerCase {
-					isCurrencyFound = true
-					break
+				if !foundForbidden {
+					nameToLowerCase := strings.ToLower(itemPartialName)
+
+					if textLower == nameToLowerCase {
+						isCurrencyFound = true
+						break
+					}
 				}
 			}
 		}
