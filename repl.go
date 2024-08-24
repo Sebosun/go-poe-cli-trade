@@ -2,27 +2,24 @@ package main
 
 import (
 	"fmt"
+	"go-poe-trade/helpers"
 	"os"
-	"slices"
 	"strings"
 )
 
 func isPriceCheck(text string) bool {
 	inputSlice := strings.Split(text, " ")
 
-	if inputSlice[0] == "pc" {
-		return true
-	}
-
-	return false
+	return inputSlice[0] == "pc"
 }
 
 func replParse(text string, state *State) {
 	if text == "" {
 		return
 	}
+
 	exitCommands := []string{"exit", "e", "quit", "Exit", ":q", "close"}
-	_, isExitCommand := slices.BinarySearch(exitCommands, text)
+	_, isExitCommand := helpers.FindStr(exitCommands, strings.ToLower(text))
 
 	if isExitCommand {
 		os.Exit(0)
@@ -31,6 +28,11 @@ func replParse(text string, state *State) {
 
 	if isPriceCheck(text) {
 		parsePriceCheck(text, state)
+		return
+	}
+
+	if text == "all" {
+		printAllCurrency(state)
 		return
 	}
 

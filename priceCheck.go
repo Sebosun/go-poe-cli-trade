@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -13,6 +14,7 @@ func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
 	forbiddenSplitNames := []string{"orb", "scroll", "shard", "lifeforce", "maven", "grand", "ichor"}
 	textLower := strings.ToLower(text)
 
+	// TODO: this part is broken atm
 	i := slices.IndexFunc(details, func(n CurrencyDetails) bool {
 		isCurrencyFound := n.Name == textLower || n.TradeID == textLower || string(n.ID) == textLower
 
@@ -70,9 +72,18 @@ func parsePriceCheck(text string, state *State) {
 		return
 	}
 
-	slice := input[1:]
+	userInput := input[1:]
 
-	currencyNames, found := getCurrencyName(slice[0], state)
+	quantity, quantityError := strconv.Atoi(userInput[0])
+
+	if quantityError == nil {
+		// Hack, cutting user input for example: pc 10 divine, we are left with 'divine'
+		userInput = userInput[1:]
+	} else {
+		quantity = 1
+	}
+
+	currencyNames, found := getCurrencyName(userInput[0], state)
 	if !found {
 		fmt.Println("Currency not found!")
 		return
@@ -84,6 +95,8 @@ func parsePriceCheck(text string, state *State) {
 		return
 	}
 
-	divPrice, chaosPrice := convertChaosToDivs(currency.ChaosEquivalent, state.divLine.ChaosEquivalent)
-	fmt.Printf("%s: Divs %d Chaos %.2f  \n", currency.CurrencyTypeName, divPrice, chaosPrice)
+	chaosEquivalent := currency.ChaosEquivalent * float64(quantity)
+
+	divPrice, chaosPrice := convertChaosToDivs(chaosEquivalent, state.divLine.ChaosEquivalent)
+	currencyPrinter(currency.CurrencyTypeName, chaosEquivalent, divPrice, chaosPrice, quantity)
 }

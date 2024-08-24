@@ -26,14 +26,13 @@ func convertChaosToDivs(itemPriceChaos float64, priceDiv float64) (int64, float6
 
 }
 
-/* func printCurrency(state *State) { */
-/* 	for n := range len(state.currency.Lines) { */
-/* 		curLine := state.currency.Lines[n] */
-/**/
-/* 		divine := state.divLine */
-/* 		divineEquivalent, chaosReminder := convertChaosToDivs(curLine.ChaosEquivalent, divine.ChaosEquivalent) */
-/**/
-/* 		fmt.Printf("Pay %v chaos for %s aka %s. or %d divines %.2f chaoses \n", curLine.ChaosEquivalent, curLine.CurrencyTypeName, curLine.DetailsID, divineEquivalent, chaosReminder) */
-/* 		/* fmt.Printf("Result %v %s %v %f \n", curLine.ChaosEquivalent, curLine.CurrencyTypeName, divineEquivalent, chaosReminder) */
-/* 	} */
-/* } */
+func printAllCurrency(state *State) {
+	for n := range len(state.currency.Lines) {
+		curLine := state.currency.Lines[n]
+
+		divine := state.divLine
+		divineEquivalent, chaosReminder := convertChaosToDivs(curLine.ChaosEquivalent, divine.ChaosEquivalent)
+
+		currencyPrinter(curLine.CurrencyTypeName, curLine.ChaosEquivalent, divineEquivalent, chaosReminder, 1)
+	}
+}
