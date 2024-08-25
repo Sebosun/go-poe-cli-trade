@@ -9,51 +9,50 @@ import (
 	"strings"
 )
 
+func findAndExcludeForbidden(splitName []string, forbidden []string, target string) bool {
+	isFound := false
+	for _, name := range splitName {
+		_, foundForbidden := helpers.Find(forbidden, func(forbiddenName string) bool {
+			return forbiddenName == strings.ToLower(name)
+		})
+
+		if foundForbidden {
+			continue
+		}
+
+		_, found := helpers.Find(splitName, func(k string) bool {
+			return strings.ToLower(k) == target
+		})
+
+		if found {
+			isFound = found
+			break
+		}
+	}
+
+	return isFound
+}
+
 func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
 	details := state.currency.CurrencyDetails
 	// TODO: Run function that checks double names and store them in state
 	forbiddenSplitNames := []string{"orb", "scroll", "shard", "lifeforce", "maven", "grand", "ichor"}
-	textLower := strings.ToLower(text)
 
-	// TODO: this part is broken atm
 	i := slices.IndexFunc(details, func(n CurrencyDetails) bool {
-		isCurrencyFound := n.Name == textLower || n.TradeID == textLower || string(n.ID) == textLower
+		isCurrencyFound := n.Name == text || n.TradeID == text || string(n.ID) == text
 
 		if !isCurrencyFound {
 			tradeIdSplit := strings.Split(n.TradeID, "-")
 
-			for _, v := range tradeIdSplit {
-				_, foundForbidden := helpers.Find(forbiddenSplitNames, func(forbiddenName string) bool {
-					return forbiddenName == v
-				})
-
-				if !foundForbidden {
-					_, found := helpers.Find(tradeIdSplit, func(k string) bool {
-						return k == textLower
-					})
-					isCurrencyFound = found
-					break
-				}
-			}
+			isFound := findAndExcludeForbidden(tradeIdSplit, forbiddenSplitNames, text)
+			isCurrencyFound = isFound
 		}
 
 		if !isCurrencyFound {
-			nameSliced := strings.Split(n.Name, " ")
+			nameSplit := strings.Split(n.Name, " ")
 
-			for _, itemPartialName := range nameSliced {
-				_, foundForbidden := helpers.Find(forbiddenSplitNames, func(forbiddenName string) bool {
-					return forbiddenName == strings.ToLower(itemPartialName)
-				})
-
-				if !foundForbidden {
-					nameToLowerCase := strings.ToLower(itemPartialName)
-
-					if textLower == nameToLowerCase {
-						isCurrencyFound = true
-						break
-					}
-				}
-			}
+			isFound := findAndExcludeForbidden(nameSplit, forbiddenSplitNames, text)
+			isCurrencyFound = isFound
 		}
 
 		return isCurrencyFound
@@ -96,11 +95,15 @@ func parsePriceCheck(text string, state *State) {
 	}
 
 	currencyNames, found := getCurrencyName(userInput[0], state)
+	/* itemName, found := getItemByName(userInput[0], state) */
+
 	if !found {
 		fmt.Println("Currency not found!")
 		return
 	}
 
+	// TODO: Searching for Chaos Orb by name will fail
+	// Since Chaos is not in Lines - it's the defautl currency it'd be worth 1 chaos and whatever chaos/divine
 	currency, err := findCurrencyByName(currencyNames.Name, state)
 	if err != nil {
 		fmt.Println("Couldn't find the currency!")

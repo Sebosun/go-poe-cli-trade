@@ -25,3 +25,25 @@ func fetchCurrency(url string, currency *Currency) error {
 
 	return nil
 }
+
+func fetchItem(url string) (TradeItems, error) {
+	basicItem := TradeItems{}
+
+	r, err := http.Get(url)
+
+	if err != nil {
+		return basicItem, err
+	}
+
+	defer r.Body.Close()
+
+	decoder := json.NewDecoder(r.Body)
+
+	err = decoder.Decode(&basicItem)
+
+	if err != nil {
+		return basicItem, nil
+	}
+
+	return basicItem, nil
+}
