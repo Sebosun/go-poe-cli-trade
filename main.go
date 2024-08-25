@@ -18,9 +18,8 @@ func main() {
 
 	state := State{}
 
-	getJson(CURRENCY_URL, &state.currency)
+	fetchCurrency(CURRENCY_URL, &state.currency)
 	extractDiv(&state)
-	/* printCurrency(&state) */
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {

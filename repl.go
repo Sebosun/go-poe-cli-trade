@@ -36,5 +36,10 @@ func replParse(text string, state *State) {
 		return
 	}
 
+	if text == "export" {
+		exportToCSV(state)
+		return
+	}
+
 	fmt.Println("Use pc to price check an item!")
 }
