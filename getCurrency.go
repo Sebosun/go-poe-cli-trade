@@ -1,49 +1,63 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
+	"errors"
+	"slices"
+	"strings"
 )
 
-func fetchCurrency(url string, currency *Currency) error {
-	r, err := http.Get(url)
+func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
+	details := state.currency.CurrencyDetails
+	// TODO: Run function that checks double names and store them in state
+	forbiddenSplitNames := []string{"orb", "scroll", "shard", "lifeforce", "maven", "grand", "ichor"}
 
-	if err != nil {
-		return err
+	i := slices.IndexFunc(details, func(n CurrencyDetails) bool {
+		isCurrencyFound := n.Name == text || n.TradeID == text || string(n.ID) == text
+
+		if !isCurrencyFound {
+			tradeIdSplit := strings.Split(n.TradeID, "-")
+
+			isFound := findAndExcludeForbidden(tradeIdSplit, forbiddenSplitNames, text)
+			isCurrencyFound = isFound
+		}
+
+		if !isCurrencyFound {
+			nameSplit := strings.Split(n.Name, " ")
+
+			isFound := findAndExcludeForbidden(nameSplit, forbiddenSplitNames, text)
+			isCurrencyFound = isFound
+		}
+
+		return isCurrencyFound
+	})
+
+	if i < 0 {
+		return CurrencyDetails{}, false
 	}
 
-	defer r.Body.Close()
-
-	decoder := json.NewDecoder(r.Body)
-
-	err = decoder.Decode(&currency)
-
-	if err != nil {
-		return fmt.Errorf("Error fethcing the url")
-	}
-
-	return nil
+	return details[i], true
 }
 
-func fetchItem(url string) (TradeItems, error) {
-	basicItem := TradeItems{}
+func findCurrencyByName(text string, state *State) (Line, error) {
+	found := Line{}
+	for _, curLine := range state.currency.Lines {
+		if curLine.CurrencyTypeName == text {
+			return curLine, nil
+		}
+	}
+	return found, errors.New("No line found")
+}
 
-	r, err := http.Get(url)
-
-	if err != nil {
-		return basicItem, err
+func getCurrency(input string, state *State) (Line, error) {
+	currencyName, found := getCurrencyName(input, state)
+	if !found {
+		return Line{}, errors.New("Couldn't find the currency name")
 	}
 
-	defer r.Body.Close()
-
-	decoder := json.NewDecoder(r.Body)
-
-	err = decoder.Decode(&basicItem)
+	currency, err := findCurrencyByName(currencyName.Name, state)
 
 	if err != nil {
-		return basicItem, nil
+		return Line{}, errors.New("Couldn't find the currency")
 	}
-
-	return basicItem, nil
+	return currency, nil
 }

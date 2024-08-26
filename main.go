@@ -10,7 +10,7 @@ import (
 type State struct {
 	currency Currency
 	items    TradeItems
-	divLine  Lines
+	divLine  Line
 	replMode string
 }
 

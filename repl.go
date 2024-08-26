@@ -27,7 +27,7 @@ func replParse(text string, state *State) {
 	}
 
 	if isPriceCheck(text) {
-		parsePriceCheck(text, state)
+		priceCheck(text, state)
 		return
 	}
 

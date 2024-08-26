@@ -55,7 +55,7 @@ type Pay struct {
 	ListingCount      int       `json:"listing_count"`
 }
 
-type Lines struct {
+type Line struct {
 	CurrencyTypeName              string                        `json:"currencyTypeName"`
 	Pay                           Pay                           `json:"pay,omitempty"`
 	Receive                       Receive                       `json:"receive,omitempty"`
@@ -68,7 +68,7 @@ type Lines struct {
 }
 
 type Currency struct {
-	Lines           []Lines           `json:"lines"`
+	Lines           []Line            `json:"lines"`
 	CurrencyDetails []CurrencyDetails `json:"currencyDetails"`
 }
 
