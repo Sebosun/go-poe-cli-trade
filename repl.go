@@ -7,12 +7,6 @@ import (
 	"strings"
 )
 
-func isPriceCheck(text string) bool {
-	inputSlice := strings.Split(text, " ")
-
-	return inputSlice[0] == "pc"
-}
-
 func replParse(text string, state *State) {
 	if text == "" {
 		return
@@ -26,20 +20,18 @@ func replParse(text string, state *State) {
 		return
 	}
 
-	if isPriceCheck(text) {
+	args := strings.Split(text, " ")
+	cmd := args[0]
+
+	switch cmd {
+	case "pc":
 		priceCheck(text, state)
-		return
-	}
-
-	if text == "all" {
+	case "all":
 		printAllCurrency(state)
-		return
-	}
-
-	if text == "export" {
+	case "export":
 		exportToCSV(state)
-		return
+	default:
+		fmt.Println("Use pc to price check an item!")
 	}
 
-	fmt.Println("Use pc to price check an item!")
 }
