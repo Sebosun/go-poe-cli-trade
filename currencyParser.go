@@ -35,4 +35,10 @@ func printAllCurrency(state *State) {
 
 		currencyPrinter(curLine.CurrencyTypeName, curLine.ChaosEquivalent, divineEquivalent, chaosReminder, 1)
 	}
+
+	for _, n := range state.items.Lines {
+		chaos := n.ChaosValue
+		divPrice, chaosPrice := convertChaosToDivs(chaos, state.divLine.ChaosEquivalent)
+		currencyPrinter(n.Name, n.ChaosValue, divPrice, chaosPrice, 1)
+	}
 }
