@@ -24,6 +24,8 @@ func replParse(text string, state *State) {
 	cmd := args[0]
 
 	switch cmd {
+	case "test":
+		state.items.ParseSharedNames()
 	case "pc":
 		priceCheck(text, state)
 	case "all":
