@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 type State struct {
@@ -15,17 +16,31 @@ type State struct {
 }
 
 func main() {
-	CURRENCY_URL := "https://poe.ninja/api/data/currencyoverview?league=Settlers&type=Currency"
-	SCARABS_URL := "https://poe.ninja/api/data/itemoverview?league=Settlers&type=Scarab"
+	LEAGUE := "Settlers"
+
+	//CURRENCY := []string{"Fragments", "KalguuranRune"}
+	ITEMS := []string{"Scarabs", "Tattoo", "Omen", "DivinationCard", "Artifact", "Oil"}
+	CURRENCY_URL := fmt.Sprintf("https://poe.ninja/api/data/currencyoverview?league=%s&type=Currency", LEAGUE)
+	ITEMS_BASE_URL := fmt.Sprintf("https://poe.ninja/api/data/itemoverview?league=%s&type=", LEAGUE)
 
 	state := State{}
 
-	fetchCurrency(CURRENCY_URL, &state.currency)
-	item, err := fetchItem(SCARABS_URL)
-	state.items.Lines = append(state.items.Lines, item.Lines...)
-
+	err := fetchCurrency(CURRENCY_URL, &state.currency)
 	if err != nil {
-		fmt.Println("Error fetching scarabs")
+		return
+	}
+
+	for _, item := range ITEMS {
+		item, err := fetchItem(fmt.Sprintf(ITEMS_BASE_URL + item))
+
+		time.Sleep(500)
+
+		if err != nil {
+			fmt.Println("Error fetching scarabs")
+			continue
+		}
+
+		state.items.Lines = append(state.items.Lines, item.Lines...)
 	}
 
 	extractDiv(&state)

@@ -8,7 +8,6 @@ import (
 )
 
 func findAndExcludeForbidden(splitName []string, forbidden []string, target string) bool {
-	isFound := false
 	for _, name := range splitName {
 		_, foundForbidden := helpers.Find(forbidden, func(forbiddenName string) bool {
 			return forbiddenName == strings.ToLower(name)
@@ -23,8 +22,7 @@ func findAndExcludeForbidden(splitName []string, forbidden []string, target stri
 		})
 
 		if found {
-			isFound = found
-			break
+			return true
 		}
 	}
 
