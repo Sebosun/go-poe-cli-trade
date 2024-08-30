@@ -26,7 +26,7 @@ func findAndExcludeForbidden(splitName []string, forbidden []string, target stri
 		}
 	}
 
-	return isFound
+	return false
 }
 
 func priceCheck(text string, state *State) {

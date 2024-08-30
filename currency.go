@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"maps"
 	"strings"
 	"time"
@@ -136,5 +135,4 @@ func (t *TradeItems) ParseSharedNames() {
 			t.SharedNames = append(t.SharedNames, key)
 		}
 	}
-
 }
