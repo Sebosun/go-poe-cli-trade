@@ -23,10 +23,6 @@ func exportToCSV(state *State) error {
 	workingDirectory, err := os.Getwd()
 
 	if err != nil {
-		return err
-	}
-
-	if err != nil {
 		fmt.Printf("Error saving currency to the disk: %v \n", err)
 		return err
 	}
