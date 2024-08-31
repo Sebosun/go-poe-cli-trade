@@ -12,7 +12,7 @@ func getCurrencyName(text string, state *State) (CurrencyDetails, bool) {
 	forbiddenSplitNames := []string{"orb", "scroll", "shard", "lifeforce", "maven", "grand", "ichor"}
 
 	i := slices.IndexFunc(details, func(n CurrencyDetails) bool {
-		isCurrencyFound := n.Name == text || n.TradeID == text || string(n.ID) == text
+		isCurrencyFound := n.Name == text || n.TradeID == text
 
 		if !isCurrencyFound {
 			tradeIdSplit := strings.Split(n.TradeID, "-")
@@ -48,6 +48,7 @@ func findCurrencyByName(text string, state *State) (Line, error) {
 	return found, errors.New("No line found")
 }
 
+// TODO: not found currency is not really an error, refactor into booleans
 func getCurrency(input string, state *State) (Line, error) {
 	currencyName, found := getCurrencyName(input, state)
 	if !found {

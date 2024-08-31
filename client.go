@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"go-poe-trade/currency"
 	"net/http"
 )
 
@@ -26,8 +27,8 @@ func fetchCurrency(url string, currency *Currency) error {
 	return nil
 }
 
-func fetchItem(url string) (TradeItems, error) {
-	basicItem := TradeItems{}
+func fetchItem(url string) (currency.TradeItems, error) {
+	basicItem := currency.TradeItems{}
 
 	r, err := http.Get(url)
 

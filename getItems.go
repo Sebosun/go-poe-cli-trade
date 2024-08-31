@@ -2,36 +2,52 @@ package main
 
 import (
 	"errors"
-	"slices"
+	"go-poe-trade/currency"
 	"strings"
 )
 
-func getItems(input string, state *State) (ItemLine, error) {
-	forbiddenSplitNames := []string{"scarab"}
+func getItems(input string, state *State) (currency.ItemLine, error) {
+	forbiddenSplitNames := state.items.SharedNames
 
-	i := slices.IndexFunc(state.items.Lines, func(item ItemLine) bool {
-		isFound := item.Name == input || item.DetailsID == input
+	var exactMatch currency.ItemLine
+	exactMatchFound := false
 
-		if !isFound {
-			detailsSplit := strings.Split(item.DetailsID, "-")
+	var closeMatch currency.ItemLine
+	closeMatchFound := false
 
-			found := findAndExcludeForbidden(detailsSplit, forbiddenSplitNames, input)
-			isFound = found
+	for _, item := range state.items.Lines {
+		exactMatchFound = strings.ToLower(item.Name) == input || strings.ToLower(item.DetailsID) == input
+		if exactMatchFound {
+			exactMatch = item
+			break
 		}
 
-		if !isFound {
-			nameSplit := strings.Split(item.Name, " ")
+		detailsSplit := strings.Split(item.DetailsID, "-")
 
-			found := findAndExcludeForbidden(nameSplit, forbiddenSplitNames, input)
-			isFound = found
+		found := findAndExcludeForbidden(detailsSplit, forbiddenSplitNames, input)
+
+		if found {
+			closeMatchFound = true
+			closeMatch = item
 		}
 
-		return isFound
-	})
+		nameSplit := strings.Split(item.Name, " ")
 
-	if i >= 0 {
-		return state.items.Lines[i], nil
+		found = findAndExcludeForbidden(nameSplit, forbiddenSplitNames, input)
+
+		if found {
+			closeMatchFound = true
+			closeMatch = item
+		}
 	}
 
-	return ItemLine{}, errors.New("Didnt find the item")
+	if exactMatchFound {
+		return exactMatch, nil
+	}
+
+	if closeMatchFound {
+		return closeMatch, nil
+	}
+
+	return currency.ItemLine{}, errors.New("Didnt find the item")
 }

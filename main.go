@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"go-poe-trade/currency"
 	"os"
 	"strings"
 	"time"
@@ -10,12 +11,13 @@ import (
 
 type State struct {
 	currency Currency
-	items    TradeItems
+	items    currency.TradeItems
 	divLine  Line
 	replMode string
 }
 
 func main() {
+	// extract to separate function
 	LEAGUE := "Settlers"
 
 	//CURRENCY := []string{"Fragments", "KalguuranRune"}

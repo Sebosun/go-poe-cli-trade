@@ -7,22 +7,26 @@ import (
 	"strings"
 )
 
-func findAndExcludeForbidden(splitName []string, forbidden []string, target string) bool {
+func findAndExcludeForbidden(splitName []string, forbidden []string, input string) bool {
 	for _, name := range splitName {
-		_, foundForbidden := helpers.Find(forbidden, func(forbiddenName string) bool {
-			return forbiddenName == strings.ToLower(name)
-		})
+		splitTarget := strings.Split(input, " ")
+		for _, target := range splitTarget {
+			fmt.Println("Split target ", target)
+			_, foundForbidden := helpers.Find(forbidden, func(forbiddenName string) bool {
+				return forbiddenName == strings.ToLower(name)
+			})
 
-		if foundForbidden {
-			continue
-		}
+			if foundForbidden {
+				continue
+			}
 
-		_, found := helpers.Find(splitName, func(k string) bool {
-			return strings.ToLower(k) == target
-		})
+			_, found := helpers.Find(splitName, func(k string) bool {
+				return strings.ToLower(k) == target
+			})
 
-		if found {
-			return true
+			if found {
+				return true
+			}
 		}
 	}
 
@@ -48,21 +52,22 @@ func priceCheck(text string, state *State) {
 		quantity = 1
 	}
 
-	checkItems := false
+	isCurrencyFound := false
+	userInputJoined := helpers.SliceJoinStrings(userInput, " ")
 	currency, err := getCurrency(userInput[0], state)
 
-	if err != nil {
-		checkItems = true
+	if err == nil {
+		isCurrencyFound = true
 	}
 
-	if !checkItems {
+	if isCurrencyFound {
 		chaosEquivalent := currency.ChaosEquivalent * float64(quantity)
 		divPrice, chaosPrice := convertChaosToDivs(chaosEquivalent, state.divLine.ChaosEquivalent)
 		currencyPrinter(currency.CurrencyTypeName, chaosEquivalent, divPrice, chaosPrice, quantity)
 		return
 	}
 
-	items, err := getItems(userInput[0], state)
+	items, err := getItems(userInputJoined, state)
 
 	if err != nil {
 		fmt.Println("Couldn't find the item")
