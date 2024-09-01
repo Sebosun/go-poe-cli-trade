@@ -11,7 +11,6 @@ func findAndExcludeForbidden(splitName []string, forbidden []string, input strin
 	for _, name := range splitName {
 		splitTarget := strings.Split(input, " ")
 		for _, target := range splitTarget {
-			fmt.Println("Split target ", target)
 			_, foundForbidden := helpers.Find(forbidden, func(forbiddenName string) bool {
 				return forbiddenName == strings.ToLower(name)
 			})
@@ -54,7 +53,7 @@ func priceCheck(text string, state *State) {
 
 	isCurrencyFound := false
 	userInputJoined := helpers.SliceJoinStrings(userInput, " ")
-	currency, err := getCurrency(userInput[0], state)
+	currency, err := state.currency.GetCurrency(text)
 
 	if err == nil {
 		isCurrencyFound = true

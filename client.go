@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func fetchCurrency(url string, currency *Currency) error {
+func fetchCurrency(url string, currency *currency.Currency) error {
 	r, err := http.Get(url)
 
 	if err != nil {

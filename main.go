@@ -10,9 +10,9 @@ import (
 )
 
 type State struct {
-	currency Currency
+	currency currency.Currency
 	items    currency.TradeItems
-	divLine  Line
+	divLine  currency.Line
 	replMode string
 }
 
