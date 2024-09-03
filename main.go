@@ -3,24 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"go-poe-trade/currency"
 	"os"
 	"strings"
 	"time"
 )
 
-type State struct {
-	currency currency.Currency
-	items    currency.TradeItems
-	divLine  currency.Line
-	replMode string
-}
-
 func main() {
 	// extract to separate function
 	LEAGUE := "Settlers"
 
-	//CURRENCY := []string{"Fragments", "KalguuranRune"}
+	// CURRENCY := []string{"Fragments", "KalguuranRune"}
 	ITEMS := []string{"Scarabs", "Tattoo", "Omen", "DivinationCard", "Artifact", "Oil"}
 	CURRENCY_URL := fmt.Sprintf("https://poe.ninja/api/data/currencyoverview?league=%s&type=Currency", LEAGUE)
 	ITEMS_BASE_URL := fmt.Sprintf("https://poe.ninja/api/data/itemoverview?league=%s&type=", LEAGUE)
@@ -45,7 +37,7 @@ func main() {
 		state.items.Lines = append(state.items.Lines, item.Lines...)
 	}
 
-	extractDiv(&state)
+	state.extractDiv()
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {

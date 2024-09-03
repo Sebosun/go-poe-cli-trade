@@ -29,9 +29,9 @@ func replParse(text string, state *State) {
 	case "pc":
 		priceCheck(text, state)
 	case "all":
-		printAllCurrency(state)
+		state.printAllCurrency()
 	case "export":
-		exportToCSV(state)
+		state.exportToCSV()
 	default:
 		fmt.Println("Use pc to price check an item!")
 	}
