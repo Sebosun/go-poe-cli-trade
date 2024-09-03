@@ -27,7 +27,7 @@ func replParse(text string, state *State) {
 	case "test":
 		state.items.ParseSharedNames()
 	case "pc":
-		priceCheck(text, state)
+		state.priceCheck(text)
 	case "all":
 		state.printAllCurrency()
 	case "export":
